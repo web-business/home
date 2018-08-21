@@ -9,12 +9,11 @@ global.navigator.userAgent = global.navigator.userAgent || 'all';
 
 var app = express();
 
-app.use(express.static(path.resolce(__dirname, 'public')));
+app.use(express.static(path.resolve(__dirname, 'public')));
 
 app.get('*', function (req, res, next) {
     try {
         var html = ReactDOM.renderToStaticMarkup(<Test />);
-        res.status(route.status || 200);
         res.send(`<!doctype html>${html}`);
 
     } catch(e) {
@@ -29,3 +28,5 @@ app.use(function (err, req, res, next) {
 app.use((req, res) => {
     res.status(404).send('404');
 });
+
+app.listen(3000)
