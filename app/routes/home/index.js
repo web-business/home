@@ -1,6 +1,7 @@
 import React from 'react';
 
 class HomePage extends React.PureComponent {
+
     constructor(props) {
         super(props);
 

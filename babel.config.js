@@ -12,7 +12,7 @@ module.exports = {
         ]
     ],
     plugins: [  
-        'syntax-dynamic-import',
+        '@babel/plugin-syntax-dynamic-import',
         'react-loadable/babel'
     ],
     ignore: ['node_modules', 'deploy'],

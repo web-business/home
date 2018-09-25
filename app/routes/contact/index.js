@@ -2,6 +2,9 @@ import React from 'react';
 
 import styles from './contact.less';
 class ContactUs extends React.PureComponent {
+    static loadData = () => {
+
+    };
     constructor(props) {
         super(props);
 
@@ -9,7 +12,6 @@ class ContactUs extends React.PureComponent {
     }
 
     render() {
-        console.log(styles)
         return (
             <div className={styles['contact-container']}>
                 同构项目联系我们

@@ -2,7 +2,6 @@ import path from 'path';
 import webpack from 'webpack';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
 import nodeExternals from 'webpack-node-externals';
-import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 
 import dirs from '../config/index';
 import { env } from '../utils/env';
@@ -43,8 +42,12 @@ export default {
                                 '@babel/preset-react'
                             ],
                             plugins: [
-                                'syntax-dynamic-import',
-                                'react-loadable/babel'
+                                '@babel/plugin-syntax-dynamic-import',
+                                [
+                                    'transform-class-properties', { 
+                                        spec: true 
+                                    }
+                                ]
                             ]
                         }
                     }
@@ -112,9 +115,7 @@ export default {
         cachedAssets: isDev
     },
     externals: [
-        nodeExternals({
-            whitelist: ['*app.config.js$']
-        })
+        nodeExternals()
     ],
     node: {
         console: false,
