@@ -86,7 +86,7 @@ export default (options) => {
             }),
             new HtmlWebpackPlugin({
                 title: 'REACT SSR',
-                template: path.resolve(dirs.client, 'public/index.html'),
+                template: path.resolve(dirs.public, 'index.html'),
                 filename: 'index.html'
             }),
             new webpack.HotModuleReplacementPlugin(),
