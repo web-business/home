@@ -1,5 +1,6 @@
 import path from 'path';
 
+
 var root = path.resolve('');
 
 export default {

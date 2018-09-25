@@ -28,9 +28,9 @@ async function ssrRender(req, res, next) {
                     location={req.url}
                     context={context}
                 >
-                    {
-                        renderRoutes(routes)
-                    }
+                {
+                    renderRoutes(routes)
+                }
                 </StaticRouter>
             </Loadable.Capture>
         );

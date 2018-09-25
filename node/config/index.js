@@ -1,21 +1,7 @@
-
 import path from 'path';
+import appConfig from '../../app.config';
 
 var root = path.resolve('');
-var appConfig = {};
-
-try {
-    appConfig = require(root + '/app.config.js');
-
-    if(appConfig.default) {
-        appConfig = appConfig.default;
-    }
-
-} catch(err) {
-    console.warn(`未在项目根目录下找到app.config.js文件，将使用默认配置目录`);
-}
-
-
 var defaultConfig = {
     root: root,
     client: path.resolve(root, 'app'),
@@ -27,4 +13,4 @@ var defaultConfig = {
     port: 3000,
 };
 
-export default Object.assign({}, defaultConfig, appConfig);
+export default Object.assign(Object.create(null), defaultConfig, appConfig);

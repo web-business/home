@@ -11,7 +11,7 @@
     "ssr:dev": "babel-node node/ssr/start --development",
     "ssr:client:build": "babel-node node/ssr/client.build",
     "ssr:server:build": "babel-node node/ssr/server.build",
-    "ssr:debug": "babel-node node/ssr/start --inspect-brk=9292",
+    "ssr:debug": "babel-node node/ssr/dev --inspect-brk=9292",
     "ssr:build": "babel-node node/ssr/build",
     "dll": "babel-node node/dll/dll"
   },

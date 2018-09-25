@@ -41,6 +41,7 @@ export default (options) => {
         mode: 'production',
         target: 'web',
         devtool: 'none',
+        context: dirs.root,
         module: {
             strictExportPresence: true,
             rules: [
@@ -65,7 +66,14 @@ export default (options) => {
                     test: /\.less$/,
                     use: [
                         ExtractCssChunks.loader,
-                        'css-loader',
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                modules: true,
+                                importLoaders: 1,
+                                localIdentName: '[name]__[local]--[hash:base64:5]'
+                            }
+                        },
                         'less-loader'
                     ]
                 }, {

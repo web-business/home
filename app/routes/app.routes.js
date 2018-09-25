@@ -1,7 +1,7 @@
 import React from 'react';
 import Loadable from 'react-loadable';
 
-import Root from './Root';
+import Root from '../components/root';
 import Loading from '../components/Loading';
 
 var Home = Loadable({

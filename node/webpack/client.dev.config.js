@@ -1,7 +1,6 @@
 import path from 'path';
 import webpack from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import CleanWebpackPlugin from 'clean-webpack-plugin';
 import ExtractCssChunks from 'extract-css-chunks-webpack-plugin';
 import { ReactLoadablePlugin } from 'react-loadable/webpack';
 
@@ -27,6 +26,7 @@ export default (options) => {
             publicPath: dirs.publicPath,
             devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
         },
+        context: dirs.root,
         cache: true,
         target: 'web',
         mode: 'development',
@@ -55,16 +55,30 @@ export default (options) => {
                     ]
                 }, {
                     test: /\.less$/,
+                    exclude: /node_modules/,
                     use: [
                         ExtractCssChunks.loader,
-                        'css-loader',
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                modules: true,
+                                importLoaders: 1,
+                                localIdentName: '[name]__[local]--[hash:base64:5]'
+                            }
+                        },
                         'less-loader'
                     ]
                 }, {
                     test: /\.css$/,
                     use: [
                         ExtractCssChunks.loader,
-                        'css-loader'
+                        {
+                            loader: 'css-loader',
+                            options: {
+                                modules: true,
+                                localIdentName: '[name]__[local]--[hash:base64:5]'
+                            }
+                        },
                     ]
                 }, {
                     test: /\.(jpg|png|gif|jpeg)$/,
@@ -92,7 +106,7 @@ export default (options) => {
             new webpack.HotModuleReplacementPlugin(),
             new ExtractCssChunks({
                 filename: 'css/[name].css',
-                chunkFilename: 'css/[name].[hash:5].css',
+                chunkFilename: 'css/[id].css',
                 hot: true 
             }),
             ...(options.type === 'ssr' ? [new ReactLoadablePlugin({
@@ -109,7 +123,7 @@ export default (options) => {
             timings: isDev,
             exclude: /node_modules/,
             builtAt: false,
-            context: dirs.server,
+            context: dirs.client,
             modules: false,
             reasons: isDev,
             cachedAssets: isDev,
