@@ -22,7 +22,7 @@ var clientPromise = changeToPromise(clientCompiler, clientConfig);
 var serverPromise = changeToPromise(serverCompiler, serverConfig);
 
 
-global.CLIENT_INS = (webpackDevMiddleware(clientCompiler, {
+server.get(/\/.+/, webpackDevMiddleware(clientCompiler, {
     publicPath: dirs.publicPath,
     logLevel: 'silent',
 }));
