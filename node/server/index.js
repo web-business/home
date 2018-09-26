@@ -63,9 +63,9 @@ app.use((req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-    res.status(err.status || 500);
-
     console.info(err.stack);
+
+    res.status(err.status || 500);
     res.send(`${err.stack.replace(/at/g, '<br />at')}`);
 });
 
@@ -76,5 +76,11 @@ if (module.hot) {
 }
 
 
-export default app;
+process.on('unhandledRejection', (err) => {
+    console.log('程序发生错误');
+    console.error(err);
+    process.exit(1);
+});
 
+
+export default app;

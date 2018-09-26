@@ -30,9 +30,9 @@ server.get(/\/.+/, webpackDevMiddleware(clientCompiler, {
 server.use(webpackHotMiddleware(clientCompiler, { log: false }));
 
 
-let appPromise;
-let appPromiseResolve;
-let appPromiseIsResolved = true;
+var appPromise;
+var appPromiseResolve;
+var appPromiseIsResolved = true;
 
 
 serverCompiler.hooks.compile.tap(serverConfig.name, () => {
@@ -53,7 +53,7 @@ serverCompiler.watch({ ignored: /node_modules/ }, (error, stats) => {
 });
 
 
-let app;
+var app;
 
 server.use((req, res) => {
     appPromise.
@@ -83,36 +83,32 @@ async function start() {
     return server;
 }
 
-process.on('unhandledRejection', (err) => {
-    // 发现这种错误及时退出程序，不退出也不能继续运行
-    console.log('程序发生错误');
-    console.error(err);
-    process.exit(1);
-});
-
 
 function checkForUpdate(fromUpdate) {
-    const hmrPrefix = '[\x1b[35mHMR\x1b[0m] ';
+    var hmrPrefix = '[\x1b[35mHMR\x1b[0m] ';
+
     if (!app.hot) {
-        throw new Error(`${hmrPrefix}Hot Module Replacement 已被禁用.`);
+        throw new Error(`${hmrPrefix}热更新已被禁用，请在开发模式下开启热更新，了解更多请前去webpack官方文档查看`);
     }
+
     if (app.hot.status() !== 'idle') {
         return Promise.resolve();
     }
+
     return (
         app.hot
         .check(true)
         .then(updatedModules => {
             if (!updatedModules) {
                 if (fromUpdate) {
-                    console.info(`${hmrPrefix}Update applied.`);
+                    console.info(`${hmrPrefix}已经更新服务端代码`);
                 }
                 return;
             }
             if (updatedModules.length === 0) {
-                console.info(`${hmrPrefix}Nothing hot updated.`);
+                console.info(`${hmrPrefix}没有需要更新的内容`);
             } else {
-                console.info(`${hmrPrefix}Updated modules:`);
+                console.info(`${hmrPrefix}发生更新的模块:`);
                 updatedModules.forEach(moduleId =>
                     console.info(`${hmrPrefix} - ${moduleId}`),
                 );
@@ -127,10 +123,10 @@ function checkForUpdate(fromUpdate) {
                 // 删除缓存，重新拉取app
                 delete require.cache[require.resolve('../../deploy/server/server.js')];
                 app = require('../../deploy/server/server.js').default;
-                console.warn(`${hmrPrefix}App 重新加载.`);
+                console.warn(`${hmrPrefix} 服务端代码重新加载.`);
             } else {
                 console.warn(
-                    `${hmrPrefix}本次更新: ${error.stack || error.message}`,
+                    `${hmrPrefix}本次更新: ${error.stack || error.message}`
                 );
             }
         })

@@ -100,7 +100,8 @@ export default (options) => {
         plugins: [
             new webpack.DefinePlugin({
                 'process.env.NODE_ENV': JSON.stringify('development'),
-                'process.env.RENDER_TYPE': JSON.stringify(options.type || 'spa')
+                'process.env.RENDER_TYPE': JSON.stringify(options.type || 'spa'),
+                'process.env.BROWSER': true
             }),
             new HtmlWebpackPlugin({
                 title: 'REACT SSR',

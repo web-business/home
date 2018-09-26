@@ -59,7 +59,7 @@ async function start() {
         next();
     });
     app.get('^/$', ssrRender);
-    app.use(express.static(dirs.deploy + '/client'));
+    app.get(/^\/.+/, express.static(dirs.deploy + '/client'));
     app.get('/*', ssrRender);
 
     app.use((req, res, next) => {
@@ -84,4 +84,3 @@ async function start() {
 start();
 
 export default app;
-
