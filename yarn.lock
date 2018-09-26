@@ -307,7 +307,7 @@
 
 "@babel/plugin-syntax-dynamic-import@^7.0.0":
   version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@babel/plugin-syntax-dynamic-import/-/plugin-syntax-dynamic-import-7.0.0.tgz#6dfb7d8b6c3be14ce952962f658f3b7eb54c33ee"
+  resolved "http://registry.npm.taobao.org/@babel/plugin-syntax-dynamic-import/download/@babel/plugin-syntax-dynamic-import-7.0.0.tgz#6dfb7d8b6c3be14ce952962f658f3b7eb54c33ee"
   integrity sha1-bft9i2w74UzpUpYvZY87frVMM+4=
   dependencies:
     "@babel/helper-plugin-utils" "^7.0.0"

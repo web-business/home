@@ -35,12 +35,12 @@ var appPromiseResolve;
 var appPromiseIsResolved = true;
 
 clientCompiler.hooks.compilation.tap('html', (compilation) => {
-    compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync('html',
-        (data, cb) => {
-            global.INDEX_HTML = data.html;
-            cb(null, data);
-        }
-    );
+    compilation.hooks.
+    htmlWebpackPluginAfterHtmlProcessing.
+    tapAsync('html', (data, cb) => {
+        global.INDEX_HTML = data.html;
+        cb(null, data);
+    });
 });
 
 
@@ -132,7 +132,7 @@ function checkForUpdate(fromUpdate) {
                     // 删除缓存，重新拉取app
                     delete require.cache[require.resolve('../../deploy/server/server.js')];
                     app = require('../../deploy/server/server.js').default;
-                    console.warn(`${hmrPrefix} 服务端代码重新加载.`);
+                    console.warn(`${hmrPrefix}服务端代码重新加载.`);
                 } else {
                     console.warn(
                         `${hmrPrefix}本次更新: ${error.stack || error.message}`

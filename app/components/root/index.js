@@ -4,10 +4,12 @@ import { renderRoutes } from 'react-router-config';
 import NavBar from '../NavBar';
 import navs from '../../consts/nav';
 import styles from './root.less';
-
+import handleHistory from '../../uitls/history';
 
 export default (props) => {
-    var { route } = props;
+    var { route, history } = props;
+
+    handleHistory(history);
 
     return (
         <div className={styles.container}>

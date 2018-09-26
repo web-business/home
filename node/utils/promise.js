@@ -1,6 +1,6 @@
 import { print } from './log';
 
-export var changeToPromise = function (compiler, config) {
+export var changeToPromise = function (compiler, config, cb) {
     var color = config.name === 'client' ? 'green' : 'yellow';
     var lines = config.name === 'client' ? '='.repeat(50) : '-'.repeat(50);
     
@@ -15,9 +15,9 @@ export var changeToPromise = function (compiler, config) {
         compiler.hooks.done.tap(config.name, (stats) => {
             var endTime = new Date();
             var { errors, warnings } = stats.compilation || {};
-
+            
             if(errors.length) {
-                console.info(errors[0]);
+                console.error(errors[0]);
                 return;
             }
 
@@ -31,6 +31,8 @@ export var changeToPromise = function (compiler, config) {
             }
             print('');
             resolve(stats);
+
+            cb && cb();
         });
     });
 };
