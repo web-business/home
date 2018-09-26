@@ -5,6 +5,7 @@ import NavBar from '../NavBar';
 import navs from '../../consts/nav';
 import styles from './root.less';
 
+
 export default (props) => {
     var { route } = props;
 

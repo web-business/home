@@ -11,6 +11,7 @@ import { print } from '../utils/log';
 import { changeToPromise } from '../utils/promise';
 
 
+
 serverConfig.output.hotUpdateMainFilename = 'updates/[hash].hot-update.json';
 serverConfig.output.hotUpdateChunkFilename = 'updates/[id].[hash].hot-update.js';
 
@@ -20,7 +21,6 @@ var multiCompiler = webpack([clientConfig, serverConfig]);
 var [clientCompiler, serverCompiler] = multiCompiler.compilers;
 var clientPromise = changeToPromise(clientCompiler, clientConfig);
 var serverPromise = changeToPromise(serverCompiler, serverConfig);
-
 
 server.get(/\/.+/, webpackDevMiddleware(clientCompiler, {
     publicPath: dirs.publicPath,
@@ -34,10 +34,19 @@ var appPromise;
 var appPromiseResolve;
 var appPromiseIsResolved = true;
 
+clientCompiler.hooks.compilation.tap('html', (compilation) => {
+    compilation.hooks.htmlWebpackPluginAfterHtmlProcessing.tapAsync('html',
+        (data, cb) => {
+            global.INDEX_HTML = data.html;
+            cb(null, data);
+        }
+    );
+});
+
 
 serverCompiler.hooks.compile.tap(serverConfig.name, () => {
     if (!appPromiseIsResolved) return;
-    
+
     appPromiseIsResolved = false;
     appPromise = new Promise(resolve => (appPromiseResolve = resolve));
 });
@@ -57,8 +66,8 @@ var app;
 
 server.use((req, res) => {
     appPromise.
-    then(() => app.handle(req, res)).
-    catch(error => console.error(error));
+        then(() => app.handle(req, res)).
+        catch(error => console.error(error));
 });
 
 
@@ -97,39 +106,39 @@ function checkForUpdate(fromUpdate) {
 
     return (
         app.hot
-        .check(true)
-        .then(updatedModules => {
-            if (!updatedModules) {
-                if (fromUpdate) {
-                    console.info(`${hmrPrefix}已经更新服务端代码`);
+            .check(true)
+            .then(updatedModules => {
+                if (!updatedModules) {
+                    if (fromUpdate) {
+                        console.info(`${hmrPrefix}已经更新服务端代码`);
+                    }
+                    return;
                 }
-                return;
-            }
-            if (updatedModules.length === 0) {
-                console.info(`${hmrPrefix}没有需要更新的内容`);
-            } else {
-                console.info(`${hmrPrefix}发生更新的模块:`);
-                updatedModules.forEach(moduleId =>
-                    console.info(`${hmrPrefix} - ${moduleId}`),
-                );
-                checkForUpdate(true);
-            }
-        })
-        .catch(error => {
-            if (['abort', 'fail'].includes(app.hot.status())) {
-                console.warn(`${hmrPrefix}无法应用热更新，原因如下.`);
-                console.info(error);
+                if (updatedModules.length === 0) {
+                    console.info(`${hmrPrefix}没有需要更新的内容`);
+                } else {
+                    console.info(`${hmrPrefix}发生更新的模块:`);
+                    updatedModules.forEach(moduleId =>
+                        console.info(`${hmrPrefix} - ${moduleId}`),
+                    );
+                    checkForUpdate(true);
+                }
+            })
+            .catch(error => {
+                if (['abort', 'fail'].includes(app.hot.status())) {
+                    console.warn(`${hmrPrefix}无法应用热更新，原因如下.`);
+                    console.info(error);
 
-                // 删除缓存，重新拉取app
-                delete require.cache[require.resolve('../../deploy/server/server.js')];
-                app = require('../../deploy/server/server.js').default;
-                console.warn(`${hmrPrefix} 服务端代码重新加载.`);
-            } else {
-                console.warn(
-                    `${hmrPrefix}本次更新: ${error.stack || error.message}`
-                );
-            }
-        })
+                    // 删除缓存，重新拉取app
+                    delete require.cache[require.resolve('../../deploy/server/server.js')];
+                    app = require('../../deploy/server/server.js').default;
+                    console.warn(`${hmrPrefix} 服务端代码重新加载.`);
+                } else {
+                    console.warn(
+                        `${hmrPrefix}本次更新: ${error.stack || error.message}`
+                    );
+                }
+            })
     );
 }
 

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import styles from './contact.less';
+
 class ContactUs extends React.PureComponent {
     static loadData = () => {
 

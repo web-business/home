@@ -13,7 +13,16 @@ import dirs from '../config/index';
 
 var app = express();
 
+app.use(function (req, res, next) {
+    console.log(req.method, '-->', req.path);
+    next();
+});
+
 async function ssrRender(req, res, next) {
+    if(/\./.test(req.path)) {
+        next();
+    }
+
     try {
         var modules = [];
         var str = fs.readFileSync(dirs.stats).toString();
@@ -56,17 +65,17 @@ async function ssrRender(req, res, next) {
 }
 
 app.get('/*', ssrRender);
-
+app.use(express.static(dirs.deploy + '/client'));
 app.use((req, res, next) => {
-    res.status(404);
-    res.render('404');
+    res.status(404).send('404');
 });
 
 app.use((err, req, res, next) => {
     console.info(err.stack);
 
-    res.status(err.status || 500);
-    res.send(`${err.stack.replace(/at/g, '<br />at')}`);
+    res.
+    status(err.status || 500).
+    send(`${err.stack.replace(/at/g, '<br />at')}`);
 });
 
 
