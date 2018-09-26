@@ -1,6 +1,6 @@
 import { print } from './log';
 
-export var changeToPromise = function (compiler, config, cb) {
+export var changeToPromise = function (compiler, config) {
     var color = config.name === 'client' ? 'green' : 'yellow';
     var lines = config.name === 'client' ? '='.repeat(50) : '-'.repeat(50);
     
@@ -12,13 +12,14 @@ export var changeToPromise = function (compiler, config, cb) {
             print(`[${timeStart.toLocaleTimeString()}]: 开始编译 '${config.name}'...`, color);
         });
 
+
         compiler.hooks.done.tap(config.name, (stats) => {
             var endTime = new Date();
             var { errors, warnings } = stats.compilation || {};
             
             if(errors.length) {
-                console.error(errors[0]);
-                return;
+                print(errors[0].message, 'red');
+                reject(new Error(config.name + ' 编译失败'));
             }
 
             print(lines, 'white');
@@ -29,10 +30,11 @@ export var changeToPromise = function (compiler, config, cb) {
             if(warnings.length) {
                 warnings.forEach(console.warn);
             }
+
             print('');
             resolve(stats);
-
-            cb && cb();
         });
     });
 };
+
+

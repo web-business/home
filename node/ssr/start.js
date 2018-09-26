@@ -11,16 +11,20 @@ import { print } from '../utils/log';
 import { changeToPromise } from '../utils/promise';
 
 
-
 serverConfig.output.hotUpdateMainFilename = 'updates/[hash].hot-update.json';
 serverConfig.output.hotUpdateChunkFilename = 'updates/[id].[hash].hot-update.js';
 
 var server = express();
+var app;
+var appPromise;
+var appPromiseResolve;
+var appPromiseIsResolved = true;
 var clientConfig = defineClientConfig({ type: 'ssr' });
 var multiCompiler = webpack([clientConfig, serverConfig]);
 var [clientCompiler, serverCompiler] = multiCompiler.compilers;
 var clientPromise = changeToPromise(clientCompiler, clientConfig);
 var serverPromise = changeToPromise(serverCompiler, serverConfig);
+
 
 server.get(/\/.+/, webpackDevMiddleware(clientCompiler, {
     publicPath: dirs.publicPath,
@@ -29,10 +33,6 @@ server.get(/\/.+/, webpackDevMiddleware(clientCompiler, {
 
 server.use(webpackHotMiddleware(clientCompiler, { log: false }));
 
-
-var appPromise;
-var appPromiseResolve;
-var appPromiseIsResolved = true;
 
 clientCompiler.hooks.compilation.tap('html', (compilation) => {
     compilation.hooks.
@@ -62,12 +62,12 @@ serverCompiler.watch({ ignored: /node_modules/ }, (error, stats) => {
 });
 
 
-var app;
 
 server.use((req, res) => {
     appPromise.
-        then(() => app.handle(req, res)).
-        catch(error => console.error(error));
+    then(() => app.handle(req, res)).
+    catch(error => console.error(error));
+    return;
 });
 
 
@@ -105,40 +105,39 @@ function checkForUpdate(fromUpdate) {
     }
 
     return (
-        app.hot
-            .check(true)
-            .then(updatedModules => {
-                if (!updatedModules) {
-                    if (fromUpdate) {
-                        console.info(`${hmrPrefix}已经更新服务端代码`);
-                    }
-                    return;
+        app.
+        hot.
+        check(true).
+        then(updatedModules => {
+            if (!updatedModules) {
+                if (fromUpdate) {
+                    console.warn(`${hmrPrefix}已经更新服务端代码`);
                 }
-                if (updatedModules.length === 0) {
-                    console.info(`${hmrPrefix}没有需要更新的内容`);
-                } else {
-                    console.info(`${hmrPrefix}发生更新的模块:`);
-                    updatedModules.forEach(moduleId =>
-                        console.info(`${hmrPrefix} - ${moduleId}`),
-                    );
-                    checkForUpdate(true);
-                }
-            })
-            .catch(error => {
-                if (['abort', 'fail'].includes(app.hot.status())) {
-                    console.warn(`${hmrPrefix}无法应用热更新，原因如下.`);
-                    console.info(error);
-
-                    // 删除缓存，重新拉取app
-                    delete require.cache[require.resolve('../../deploy/server/server.js')];
-                    app = require('../../deploy/server/server.js').default;
-                    console.warn(`${hmrPrefix}服务端代码重新加载.`);
-                } else {
-                    console.warn(
-                        `${hmrPrefix}本次更新: ${error.stack || error.message}`
-                    );
-                }
-            })
+                return;
+            }
+            if (updatedModules.length === 0) {
+                console.warn(`${hmrPrefix}没有需要更新的内容`);
+            } else {
+                console.warn(`${hmrPrefix}发生更新的模块:`);
+                updatedModules.forEach(moduleId =>
+                    console.warn(`${hmrPrefix} - ${moduleId}`),
+                );
+                checkForUpdate(true);
+            }
+        }).
+        catch(error => {
+            // 其实这里是出现了错误，现在了解到的是webpack编译出错会进这里
+            if (['abort', 'fail'].includes(app.hot.status())) {
+                console.warn(`${hmrPrefix}无法应用热更新`);
+                console.error(error);
+                // 删除缓存，重新拉取app
+                delete require.cache[require.resolve('../../deploy/server/server.js')];
+                app = require('../../deploy/server/server.js').default;
+                console.warn(`${hmrPrefix}服务端代码重新加载.`);
+            } else {
+                console.warn(`${hmrPrefix}本次更新: ${error.stack || error.message}`);
+            }
+        })
     );
 }
 

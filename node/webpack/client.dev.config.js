@@ -26,6 +26,9 @@ export default (options) => {
             publicPath: dirs.publicPath,
             devtoolModuleFilenameTemplate: info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
         },
+        resolve: {
+            modules: ['node_modules'],
+        },
         context: dirs.root,
         cache: true,
         target: 'web',
@@ -37,6 +40,7 @@ export default (options) => {
                 {
                     test: /\.jsx?$/,
                     exclude: /(node_modules)/,
+                    include: [dirs.client, path.resolve(dirs.root, 'node')],
                     use: [
                         {
                             loader: 'babel-loader',

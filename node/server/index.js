@@ -21,6 +21,7 @@ app.use(function (req, res, next) {
 async function ssrRender(req, res, next) {
     if(/\./.test(req.path)) {
         next();
+        return;
     }
 
     try {
@@ -55,12 +56,14 @@ async function ssrRender(req, res, next) {
 
         res.send(
             global.INDEX_HTML.
-                replace('</head>', `${styles}</head>`).
-                replace('<div id="root"></div>', `<div id="root">${ssr}</div>`).
-                replace('</body>', `${scripts}</body>`)
+            replace('</head>', `${styles}</head>`).
+            replace('<div id="root"></div>', `<div id="root">${ssr}</div>`).
+            replace('</body>', `${scripts}</body>`)
         );
+        return;
     } catch (err) {
         next(err);
+        return;
     }
 }
 
@@ -68,14 +71,16 @@ app.get('/*', ssrRender);
 app.use(express.static(dirs.deploy + '/client'));
 app.use((req, res, next) => {
     res.status(404).send('404');
+    return;
 });
 
 app.use((err, req, res, next) => {
     console.info(err.stack);
 
     res.
-    status(err.status || 500).
+    status(err.stack || 500).
     send(`${err.stack.replace(/at/g, '<br />at')}`);
+    return;
 });
 
 
@@ -88,7 +93,7 @@ if (module.hot) {
 process.on('unhandledRejection', (err) => {
     console.log('程序发生错误');
     console.error(err);
-    process.exit(1);
+    // process.exit(1);
 });
 
 

@@ -97,6 +97,11 @@ export default {
         new CleanWebpackPlugin(['server'], {
             root: dirs.deploy,
         }),
+        new webpack.BannerPlugin({
+            banner: 'require("source-map-support").install();',
+            raw: true,
+            entryOnly: false,
+        }),
         ...(isDev ? [new webpack.HotModuleReplacementPlugin()] : [])
     ],
     optimization: {
