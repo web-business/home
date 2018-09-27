@@ -22,7 +22,7 @@ export default (props) => {
 			}
             </div>
             <div className={styles.footer}>
-                页面底部
+                页面底2部
             </div>
         </div>
     );

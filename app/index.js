@@ -12,7 +12,7 @@ var hotRender = (nextRoutes) => {
     render(
         <BrowserRouter>
         {
-            renderRoutes(routes)
+            renderRoutes(nextRoutes || routes)
         }
         </BrowserRouter>,
         container
@@ -21,7 +21,7 @@ var hotRender = (nextRoutes) => {
 
 try {
     module.hot.accept('./routes/app.routes.js', () => {
-        hotRender();
+        hotRender(require('./routes/app.routes').default);
     });
 } catch(err) {
     if(process.env.NODE_ENV === 'development') {
