@@ -42,12 +42,13 @@ export default {
                                 '@babel/preset-react'
                             ],
                             plugins: [
-                                '@babel/plugin-syntax-dynamic-import',
+                                'syntax-dynamic-import',
                                 [
                                     'transform-class-properties', { 
                                         spec: true 
                                     }
-                                ]
+                                ],
+                                'react-loadable/babel'
                             ]
                         }
                     }
