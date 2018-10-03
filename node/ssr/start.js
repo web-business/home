@@ -26,7 +26,7 @@ var clientPromise = changeToPromise(clientCompiler, clientConfig);
 var serverPromise = changeToPromise(serverCompiler, serverConfig);
 
 
-server.get(/\/.+/, webpackDevMiddleware(clientCompiler, {
+server.use(webpackDevMiddleware(clientCompiler, {
     publicPath: dirs.publicPath,
     logLevel: 'silent',
 }));

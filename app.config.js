@@ -8,7 +8,7 @@ export default {
     client: path.resolve(root, 'app'),
     deploy: path.resolve(root, 'deploy'),
     stats: path.resolve(root, 'deploy/stats/react-loadable.json'),
-    publicPath: '/',
+    publicPath: '/test/',
     port: 9000,
     mockPort: 5000,
 };

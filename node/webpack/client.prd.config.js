@@ -58,7 +58,7 @@ export default (options) => {
                                     ['@babel/preset-react']
                                 ],
                                 plugins: [
-                                    'syntax-dynamic-import',
+                                    '@babel/plugin-syntax-dynamic-import',
                                     'react-loadable/babel',
                                     [
                                         'transform-class-properties', { 
